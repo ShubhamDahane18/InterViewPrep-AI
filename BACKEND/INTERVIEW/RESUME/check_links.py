@@ -4,7 +4,7 @@ from BACKEND.INTERVIEW.RESUME.state import ResumeAgentState
 def check_links_and_alert(state: ResumeAgentState) -> ResumeAgentState:
     broken_links = []
     
-    for key, value in state.model_dump().items():
+    for key, value in state.items():
         if key in ("full_text", "links"):
             continue
         if isinstance(value, list):

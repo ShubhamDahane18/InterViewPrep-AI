@@ -1,39 +1,71 @@
-from pydantic import BaseModel, HttpUrl, EmailStr
-from typing import Optional, List
+from typing import TypedDict, Optional, List
+from typing_extensions import NotRequired
 
 
-class Project(BaseModel):
-    project_name: str = ''
-    github_link: Optional[HttpUrl] = ''
-    live_link: Optional[HttpUrl] = ''
-    time_period: Optional[str] = ''
-    features: Optional[List[str]] = []
-    tech_stack: Optional[List[str]] = []
+class Project(TypedDict):
+    project_name: str
+    github_link: NotRequired[Optional[str]]
+    live_link: NotRequired[Optional[str]]
+    time_period: NotRequired[Optional[str]]
+    features: NotRequired[List[str]]
+    tech_stack: NotRequired[List[str]]
 
 
-class SkillsSection(BaseModel):
-    programming_languages: Optional[List[str]] = []
-    frameworks: Optional[List[str]] = []
-    libraries_tools: Optional[List[str]] = []
-    databases: Optional[List[str]] = []
-    soft_skills: Optional[List[str]] = []
+class SkillsSection(TypedDict):
+    programming_languages: NotRequired[List[str]]
+    frameworks: NotRequired[List[str]]
+    libraries_tools: NotRequired[List[str]]
+    databases: NotRequired[List[str]]
+    soft_skills: NotRequired[List[str]]
 
 
-class ResumeAgentState(BaseModel):
-    message : Optional[str] = ''
-    full_text: Optional[str] = ''
-    links: Optional[List[dict]] = []
+class Experience(TypedDict):
+    role: str
+    company: str
+    start_date: NotRequired[Optional[str]]
+    end_date: NotRequired[Optional[str]]
+    responsibilities: NotRequired[List[str]]
+
+
+class ExtracurricularActivity(TypedDict):
+    title: str
+    organization: NotRequired[Optional[str]]
+    description: NotRequired[Optional[str]]
+    date: NotRequired[Optional[str]]
+
+
+class ResumeAgentState(TypedDict):
+    message: NotRequired[Optional[str]]
+    full_text: NotRequired[Optional[str]]
+    links: NotRequired[List[dict]]
 
     # Personal Info
-    name: Optional[str] = ''
-    email: Optional[EmailStr] = ''
-    mob_no: Optional[str] = ''
+    name: NotRequired[Optional[str]]
+    email: NotRequired[Optional[str]]
+    mob_no: NotRequired[Optional[str]]
 
     # Profile Links
-    linkedin: Optional[HttpUrl] = ''
-    github: Optional[HttpUrl] = ''
-    leetcode: Optional[HttpUrl] = ''
+    linkedin: NotRequired[Optional[str]]
+    github: NotRequired[Optional[str]]
+    leetcode: NotRequired[Optional[str]]
 
     # Skills and Projects
-    skills: Optional[SkillsSection] = SkillsSection()
-    projects: Optional[List[Project]] = []
+    skills: NotRequired[SkillsSection]
+    projects: NotRequired[List[Project]]
+
+    # Experience and Extracurriculars
+    experience: NotRequired[List[Experience]]
+    extracurriculars: NotRequired[List[ExtracurricularActivity]]
+
+
+
+# job_state.py
+class JobInfoState(TypedDict):
+    response: str
+    user_input: str
+    job_title: str
+    company: Optional[str]
+    location: NotRequired[Optional[str]]
+    job_type: NotRequired[Optional[str]]  # Full-time, Internship, etc.
+    description: NotRequired[Optional[str]]
+    required_skills: NotRequired[List[str]]
