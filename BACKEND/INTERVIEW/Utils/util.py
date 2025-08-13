@@ -27,16 +27,13 @@ def extract_text_and_links_from_pdf(pdf):
     return full_text, links
 
 
-from langchain_groq import ChatGroq
-from langchain_google_genai import ChatGoogleGenerativeAI
-
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro" , api_key=os.getenv("GOOGLE_API_KEY"))
 
-# llm = ChatGroq(model="llama-3.3-70b-versatile")
+from langchain_openai import ChatOpenAI
+llm = ChatOpenAI(model="gpt-4o-mini" , api_key=os.getenv("OPENAI_API_KEY"))
 
 def load_llm():
     return llm

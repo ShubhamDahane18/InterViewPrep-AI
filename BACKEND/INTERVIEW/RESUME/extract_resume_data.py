@@ -8,8 +8,8 @@ def extract_resume_data(state: ResumeAgentState) -> ResumeAgentState:
         llm = load_llm().with_structured_output(ExtractResumeData)
         
         # Extract inputs from state
-        full_text = state.full_text or ""
-        links = state.links or []
+        full_text = state.get('full_text' , '')
+        links = state.get('links' , [])
 
         # Combine text and links into a single input string
         resume_input = full_text + "\n\nLinks:\n" + "\n".join(
@@ -19,7 +19,7 @@ def extract_resume_data(state: ResumeAgentState) -> ResumeAgentState:
         extracted_data = llm.invoke(resume_input)
 
         # Return the updated state
-        return extracted_data.model_dum()
+        return extracted_data.model_dump()
 
     except Exception as e:
         raise RuntimeError(f"Failed to extract resume data: {e}")

@@ -15,10 +15,10 @@ def main():
         st.success("✅ Resume uploaded successfully!")
         st.write(f"**Filename**: {uploaded_file.name}")
 
-        # with st.expander("Preview File Info"):
-            # st.write(f"Filename: {uploaded_file.name}")
-            # st.write(f"File Type: {uploaded_file.type}")
-            # st.write(f"File Size: {uploaded_file.size / 1024:.2f} KB")
+        with st.expander("Preview File Info"):
+            st.write(f"Filename: {uploaded_file.name}")
+            st.write(f"File Type: {uploaded_file.type}")
+            st.write(f"File Size: {uploaded_file.size / 1024:.2f} KB")
 
         if st.button("📤 Send to Backend for Parsing"):
             st.info("Sending resume to backend for parsing... 🚀")
@@ -27,12 +27,12 @@ def main():
                 text, links = extract_text_and_links_from_pdf(uploaded_file)
                 st.success("Text and links extracted!")
 
-                # st.subheader("🔍 Extracted Text")
-                # st.text_area("Text", text, height=300)
+                st.subheader("🔍 Extracted Text")
+                st.text_area("Text", text, height=300)
 
-                # st.subheader("🔗 Extracted Links")
-                # for link in links:
-                #     st.write(link)
+                st.subheader("🔗 Extracted Links")
+                for link in links:
+                    st.write(link)
 
             with st.spinner("🔧 Running Resume Graph..."):
                 # 2. Build the graph
