@@ -8,6 +8,7 @@ import os
 from edge_tts import Communicate
 import asyncio
 import threading
+import time
 
 # Streamlit UI Setup
 st.set_page_config(page_title="Real-Time Object Detection with Voice", layout="centered")
@@ -44,7 +45,9 @@ if st.session_state.camera_running:
     cap = cv2.VideoCapture(0)
     frame_placeholder = st.empty()
 
-    last_state = ""
+    person_present = True  # Track if person was present in previous frame
+    last_prompt_time = 0  # Track when last "step into view" was said
+    
     try:
         while st.session_state.camera_running:
             ret, frame = cap.read()
@@ -57,22 +60,26 @@ if st.session_state.camera_running:
             df = results.pandas().xyxy[0]
             persons = df[df['name'] == 'person']
 
-            if len(persons) > 0:
-                label = "Person detected"
+            current_time = time.time()
+            
+            # Handle TTS prompts when no person is detected
+            if len(persons) == 0:
+                if person_present:  # First time person disappears
+                    threading.Thread(target=tts_thread, args=("Please step into view",), daemon=True).start()
+                    person_present = False
+                    last_prompt_time = current_time
+                elif current_time - last_prompt_time >= 3.0:  # Repeat every 3 seconds if still no person
+                    threading.Thread(target=tts_thread, args=("Please step into view",), daemon=True).start()
+                    last_prompt_time = current_time
             else:
-                label = "Please step into view"
+                person_present = True
+                last_prompt_time = 0  # Reset timer when person is detected
 
-            # Speak only on state change
-            if label != last_state:
-                threading.Thread(target=tts_thread, args=(label,), daemon=True).start()
-                last_state = label
-
-            # Draw bounding boxes
+            # Draw bounding boxes (without text labels)
             for index, row in persons.iterrows():
                 x1, y1, x2, y2 = map(int, [row['xmin'], row['ymin'], row['xmax'], row['ymax']])
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                cv2.putText(frame, label, (x1, y1 - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+                # Removed the cv2.putText line to eliminate text labels
 
             # Display in Streamlit
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
